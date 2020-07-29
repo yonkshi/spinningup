@@ -1,5 +1,12 @@
 **Status:** Maintenance (expect bug fixes and minor updates)
 
+Forked version of the origin Spinning Up
+==================================
+Change(s): 
+
+* Pytorch implementation of PointNet in `common.py`
+* Adapted PPO_pytorch with PointNet. It can now learn from point cloud data. (Other algorithms coming soon..)
+
 Welcome to Spinning Up in Deep RL! 
 ==================================
 
