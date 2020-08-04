@@ -17,7 +17,8 @@ class PPOBuffer:
     """
 
     def __init__(self, obs_dim, act_dim, size, gamma=0.99, lam=0.95):
-        self.obs_buf = np.zeros(core.combined_shape(size, obs_dim), dtype=np.float32)
+        self.obs_buf = [None] * size
+        # self.obs_buf = np.zeros(core.combined_shape(size, obs_dim), dtype=np.float32)
         self.act_buf = np.zeros(core.combined_shape(size, act_dim), dtype=np.float32)
         self.adv_buf = np.zeros(size, dtype=np.float32)
         self.rew_buf = np.zeros(size, dtype=np.float32)
@@ -297,7 +298,15 @@ def ppo(env_fn, actor_critic=core.MLPActorCritic, ac_kwargs=dict(), seed=0,
     # Main loop: collect experience in env and update/log each epoch
     for epoch in range(epochs):
         for t in range(local_steps_per_epoch):
-            a, v, logp = ac.step(torch.as_tensor(o, dtype=torch.float32))
+            # a, v, logp = ac.step(torch.tensor(o,dtype=torch.float32))
+            # TODO Detect tuple of o
+            if type(o) is tuple:
+                # Convert tuple elements into list of tensors
+                o = tuple(torch.tensor(item,dtype=torch.float32) for item in o)
+            else:
+                o = torch.tensor(o,dtype=torch.float32)
+
+            a, v, logp = ac.step(o)
 
             next_o, r, d, _ = env.step(a)
             ep_ret += r
